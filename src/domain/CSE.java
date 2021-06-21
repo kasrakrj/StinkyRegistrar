@@ -3,7 +3,7 @@ import java.util.Date;
 
 public class CSE {
 	private Course course;
-	private int section;
+	private int section;//TODO section is badly named group could be a better choice
 	private Date examDate;
 
 	public CSE(Course course) {

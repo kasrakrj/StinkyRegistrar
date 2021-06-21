@@ -8,6 +8,7 @@ public class Student {
 	private String id;
 	private String name;
 
+	//TODO Can use CSE instead
 	static class CourseSection {
         CourseSection(Course course, int section) {
             this.course = course;
@@ -51,7 +52,8 @@ public class Student {
 	public String getName() {
 		return name;
 	}
-	
+
+	//TODO Can have annotation
 	public String toString() {
 		return name;
 	}

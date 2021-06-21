@@ -22,7 +22,8 @@ public class Term {
 	public String getName() {
 		return name;
 	}
-	
+
+	//TODO Could have annotation
 	public String toString() {
 		return name;
 	}

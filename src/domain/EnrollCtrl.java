@@ -6,9 +6,11 @@ import java.util.Map;
 import domain.exceptions.EnrollmentRulesViolationException;
 
 public class EnrollCtrl {
+    //TODO  Could have better variable names
 	public void enroll(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
         Map<Term, Map<Course, Double>> transcript = s.getTranscript();
 		for (CSE o : courses) {
+		    //TODO method extraction checkIsPassed
             for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
                 for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
                     if (r.getKey().equals(o.getCourse()) && r.getValue() >= 10)
@@ -16,11 +18,12 @@ public class EnrollCtrl {
                 }
             }
 			List<Course> prereqs = o.getCourse().getPrerequisites();
-			nextPre:
+			nextPre://continue
 			for (Course pre : prereqs) {
+
                 for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
                     for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-                        if (r.getKey().equals(pre) && r.getValue() >= 10)
+                        if (r.getKey().equals(pre) && r.getValue() >= 10)//TODO not the condition and replace continue with exception
                             continue nextPre;
                     }
 				}
@@ -29,6 +32,7 @@ public class EnrollCtrl {
             for (CSE o2 : courses) {
                 if (o == o2)
                     continue;
+                //TODO method extraction
                 if (o.getExamTime().equals(o2.getExamTime()))
                     throw new EnrollmentRulesViolationException(String.format("Two offerings %s and %s have the same exam time", o, o2));
                 if (o.getCourse().equals(o2.getCourse()))
@@ -36,10 +40,12 @@ public class EnrollCtrl {
             }
 		}
 		int unitsRequested = 0;
+		//TODO method extraction getTotalUnits
 		for (CSE o : courses)
 			unitsRequested += o.getCourse().getUnits();
 		double points = 0;
 		int totalUnits = 0;
+		//TODO calculateGPA
         for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
             for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
                 points += r.getValue() * r.getKey().getUnits();
@@ -47,6 +53,7 @@ public class EnrollCtrl {
             }
 		}
 		double gpa = points / totalUnits;
+        //TODO hasPassedMinimumGPAUnits
 		if ((gpa < 12 && unitsRequested > 14) ||
 				(gpa < 16 && unitsRequested > 16) ||
 				(unitsRequested > 20))

@@ -3,12 +3,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class Course {
 	private String id;
 	private String name;
 	private int units;
 	
-	List<Course> prerequisites;
+	List<Course> prerequisites;//TODO Should be private
 
 	public Course(String id, String name, int units) {
 		this.id = id;
@@ -23,13 +24,14 @@ public class Course {
 
 	public Course withPre(Course... pres) {
 		prerequisites.addAll(Arrays.asList(pres));
-		return this;
+		return this;//TODO Doesn't need to returns it's instance!
 	}
 
 	public List<Course> getPrerequisites() {
 		return prerequisites;
 	}
 
+	//TODO double check, Override?
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
@@ -54,6 +56,7 @@ public class Course {
 		return id;
 	}
 
+	//TODO override, if obj's type isn't Course exception is thrown
 	public boolean equals(Object obj) {
 		Course other = (Course)obj;
 		return id.equals(other.id);
