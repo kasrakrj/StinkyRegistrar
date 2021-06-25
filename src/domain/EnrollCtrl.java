@@ -7,8 +7,9 @@ import domain.exceptions.EnrollmentRulesViolationException;
 
 public class EnrollCtrl {
     //TODO  Could have better variable names
-	public void enroll(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
-        Map<Term, Map<Course, Double>> transcript = s.getTranscript();
+	public void enroll(Student student, List<CSE> courses) throws EnrollmentRulesViolationException {
+        Map<Term, Map<Course, Double>> transcript = student.getTranscript();
+
 		for (CSE o : courses) {
 		    //TODO method extraction checkIsPassed
             for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
@@ -39,26 +40,17 @@ public class EnrollCtrl {
                     throw new EnrollmentRulesViolationException(String.format("%s is requested to be taken twice", o.getCourse().getName()));
             }
 		}
-		int unitsRequested = 0;
-		//TODO method extraction getTotalUnits
-		for (CSE o : courses)
-			unitsRequested += o.getCourse().getUnits();
-		double points = 0;
-		int totalUnits = 0;
-		//TODO calculateGPA
-        for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-            for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-                points += r.getValue() * r.getKey().getUnits();
-                totalUnits += r.getKey().getUnits();
-            }
-		}
-		double gpa = points / totalUnits;
+
+		int unitsRequested = courses.stream().mapToInt(o -> o.getCourse().getUnits()).sum();
+
+        double gpa = student.getGpa();
+
         //TODO hasPassedMinimumGPAUnits
 		if ((gpa < 12 && unitsRequested > 14) ||
 				(gpa < 16 && unitsRequested > 16) ||
 				(unitsRequested > 20))
 			throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f", unitsRequested, gpa));
 		for (CSE o : courses)
-			s.takeCourse(o.getCourse(), o.getSection());
+			student.takeCourse(o.getCourse(), o.getSection());
 	}
 }
