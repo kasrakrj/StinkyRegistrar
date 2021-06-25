@@ -9,7 +9,7 @@ public class Course {
 	private String name;
 	private int units;
 	
-	List<Course> prerequisites;//TODO Should be private
+	private List<Course> prerequisites;
 
 	public Course(String id, String name, int units) {
 		this.id = id;
