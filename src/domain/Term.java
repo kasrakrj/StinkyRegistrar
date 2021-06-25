@@ -23,7 +23,7 @@ public class Term {
 		return name;
 	}
 
-	//TODO Could have annotation
+	@Override
 	public String toString() {
 		return name;
 	}

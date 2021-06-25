@@ -46,7 +46,7 @@ public class Student {
 		return name;
 	}
 
-	//TODO Can have annotation
+	@Override
 	public String toString() {
 		return name;
 	}
