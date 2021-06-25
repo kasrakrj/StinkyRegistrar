@@ -7,10 +7,10 @@ import domain.exceptions.EnrollmentRulesViolationException;
 
 public class EnrollCtrl {
     //TODO  Could have better variable names
-    public void enroll(Student student, List<CSE> courses) throws EnrollmentRulesViolationException {
+    public void enroll(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
         Map<Term, Map<Course, Double>> transcript = student.getTranscript();
 
-        for (CSE o : courses) {
+        for (Offering o : offerings) {
             //TODO method extraction checkIsPassed
             for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
                 for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
@@ -30,7 +30,7 @@ public class EnrollCtrl {
                 }
                 throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), o.getCourse().getName()));
             }
-            for (CSE o2 : courses) {
+            for (Offering o2 : offerings) {
                 if (o == o2)
                     continue;
                 //TODO method extraction
@@ -41,14 +41,14 @@ public class EnrollCtrl {
             }
         }
 
-        checkForGPALimit(student, courses);
+        checkForGPALimit(student, offerings);
 
-        for (CSE o : courses)
+        for (Offering o : offerings)
             student.takeCourse(o.getCourse(), o.getSection());
     }
 
-    private void checkForGPALimit(Student student, List<CSE> courses) throws EnrollmentRulesViolationException {
-        int unitsRequested = courses.stream().mapToInt(o -> o.getCourse().getUnits()).sum();
+    private void checkForGPALimit(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+        int unitsRequested = offerings.stream().mapToInt(o -> o.getCourse().getUnits()).sum();
 
         if ((student.getGpa() < 12 && unitsRequested > 14) ||
                 (student.getGpa() < 16 && unitsRequested > 16) ||
