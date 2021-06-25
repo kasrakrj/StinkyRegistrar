@@ -6,40 +6,34 @@ import java.util.Map;
 import domain.exceptions.EnrollmentRulesViolationException;
 
 public class EnrollCtrl {
-    //TODO  Could have better variable names
     public void enroll(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
-        Map<Term, Map<Course, Double>> transcript = student.getTranscript();
-
-        for (Offering o : offerings) {
-            //TODO method extraction checkIsPassed
-            for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-                for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-                    if (r.getKey().equals(o.getCourse()) && r.getValue() >= 10)
-                        throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
-                }
-            }
-        }
-        for (Offering o : offerings) {
-            List<Course> prereqs = o.getCourse().getPrerequisites();
-            nextPre:
-//continue
-            for (Course pre : prereqs) {
-
-                for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-                    for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-                        if (r.getKey().equals(pre) && r.getValue() >= 10)//TODO not the condition and replace continue with exception
-                            continue nextPre;
-                    }
-                }
-                throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), o.getCourse().getName()));
-            }
-        }
+        checkForAlreadyPassedCourses(student, offerings);
+        checkForPrerequisiteRequirements(student, offerings);
         checkForExamTimeConflict(offerings);
         checkForDuplicateEnrollRequest(offerings);
         checkForGPALimit(student, offerings);
 
         for (Offering o : offerings)
             student.takeCourse(o.getCourse(), o.getSection());
+    }
+
+    private void checkForAlreadyPassedCourses(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+        for (Offering o : offerings) {
+            if (student.hasPassed(o.getCourse())) {
+                throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
+            }
+        }
+    }
+
+    private void checkForPrerequisiteRequirements(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+        for (Offering o : offerings) {
+            List<Course> prereqs = o.getCourse().getPrerequisites();
+            for (Course pre : prereqs) {
+                if (!student.hasPassed(pre)) {
+                    throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), o.getCourse().getName()));
+                }
+            }
+        }
     }
 
     private void checkForExamTimeConflict(List<Offering> offerings) throws EnrollmentRulesViolationException {
