@@ -76,17 +76,19 @@ public class EnrollCtrlTest {
 		assertTrue(hasTaken(bebe));
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTakeWithoutPreTaken() throws EnrollmentRulesViolationException {
-		new EnrollCtrl().enroll(bebe, requestedOfferings(math2, phys1, prog));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(math2, phys1, prog));
+		assertEquals(1, violations.size());
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTakeWithoutPrePassed() throws EnrollmentRulesViolationException {
 		bebe.addTranscriptRecord(phys1, new Term("t1"), 18);
 		bebe.addTranscriptRecord(prog, new Term("t1"), 12);
 		bebe.addTranscriptRecord(math1, new Term("t1"), 8.4);
-		new EnrollCtrl().enroll(bebe, requestedOfferings(math2, ap));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(math2, ap));
+		assertEquals(1, violations.size());
 	}
 
 	@Test
@@ -103,7 +105,7 @@ public class EnrollCtrlTest {
 		assertTrue(hasTaken(bebe, math2, dm));
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTakeAlreadyPassed1() throws EnrollmentRulesViolationException {
 		bebe.addTranscriptRecord(phys1, new Term("t1"), 18);
 		bebe.addTranscriptRecord(prog, new Term("t1"), 12);
@@ -113,10 +115,11 @@ public class EnrollCtrlTest {
 		bebe.addTranscriptRecord(ap, new Term("t2"), 16);
 		bebe.addTranscriptRecord(math1, new Term("t2"), 10.5);
 
-		new EnrollCtrl().enroll(bebe, requestedOfferings(math1, dm));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(math1, dm));
+		assertEquals(1, violations.size());
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTakeAlreadyPassed2() throws EnrollmentRulesViolationException {
 		bebe.addTranscriptRecord(phys1, new Term("t1"), 18);
 		bebe.addTranscriptRecord(prog, new Term("t1"), 12);
@@ -126,23 +129,26 @@ public class EnrollCtrlTest {
 		bebe.addTranscriptRecord(ap, new Term("t2"), 16);
 		bebe.addTranscriptRecord(math1, new Term("t2"), 10.5);
 
-		new EnrollCtrl().enroll(bebe, requestedOfferings(phys1, dm));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(phys1, dm));
+		assertEquals(1, violations.size());
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTakeOfferingsWithSameExamTime() throws EnrollmentRulesViolationException {
 		Calendar cal = Calendar.getInstance();
-		new EnrollCtrl().enroll(bebe,
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe,
 				List.of(
 					new Offering(phys1, cal.getTime()),
 					new Offering(math1, cal.getTime()),
 					new Offering(phys1, cal.getTime())
 				));
+		assertEquals(8, violations.size());
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTakeACourseTwice() throws EnrollmentRulesViolationException {
-		new EnrollCtrl().enroll(bebe, requestedOfferings(phys1, dm, phys1));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(phys1, dm, phys1));
+		assertEquals(3, violations.size());
 	}
 
 	@Test
@@ -155,13 +161,14 @@ public class EnrollCtrlTest {
 		assertTrue(hasTaken(bebe, dm, math1, farsi, akhlagh, english, maaref));
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTake15WithGPA11() throws EnrollmentRulesViolationException {
 		bebe.addTranscriptRecord(phys1, new Term("t1"), 13);
 		bebe.addTranscriptRecord(prog, new Term("t1"), 11);
 		bebe.addTranscriptRecord(math1, new Term("t1"), 9);
 
-		new EnrollCtrl().enroll(bebe, requestedOfferings(dm, math1, farsi, akhlagh, english, ap));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(dm, math1, farsi, akhlagh, english, ap));
+		assertEquals(1, violations.size());
 		assertTrue(hasTaken(bebe, dm, math1, farsi, akhlagh, english, ap));
 	}
 
@@ -185,13 +192,14 @@ public class EnrollCtrlTest {
 		assertTrue(hasTaken(bebe, dm, math2, farsi, akhlagh, english, maaref));
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTake18WithGPA15() throws EnrollmentRulesViolationException {
 		bebe.addTranscriptRecord(phys1, new Term("t1"), 15);
 		bebe.addTranscriptRecord(prog, new Term("t1"), 15);
 		bebe.addTranscriptRecord(math1, new Term("t1"), 15);
 
-		new EnrollCtrl().enroll(bebe, requestedOfferings(ap, dm, math2, farsi, akhlagh, english, ap));
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(ap, dm, math2, farsi, akhlagh, english, ap));
+		assertEquals(3, violations.size());
 		assertTrue(hasTaken(bebe, ap, dm, math2, farsi, akhlagh, english, ap));
 	}
 
@@ -206,14 +214,15 @@ public class EnrollCtrlTest {
 		assertTrue(hasTaken(bebe, ap, dm, math2, phys2, economy, karafarini, farsi));
 	}
 
-	@Test(expected = EnrollmentRulesViolationException.class)
+	@Test
 	public void cannotTake24() throws EnrollmentRulesViolationException {
 		bebe.addTranscriptRecord(phys1, new Term("t1"), 16);
 		bebe.addTranscriptRecord(prog, new Term("t1"), 16);
 		bebe.addTranscriptRecord(math1, new Term("t1"), 16);
 
-		new EnrollCtrl().enroll(bebe, requestedOfferings(
+		List<EnrollmentRulesViolationException> violations = new EnrollCtrl().enroll(bebe, requestedOfferings(
 				ap, dm, math2, phys2, economy, karafarini, farsi, akhlagh, english));
+		assertEquals(1, violations.size());
 		assertTrue(hasTaken(bebe, ap, dm, math2, phys2, economy, karafarini, farsi, akhlagh, english));
 	}
 
