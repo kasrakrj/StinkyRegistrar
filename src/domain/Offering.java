@@ -3,7 +3,7 @@ import java.util.Date;
 
 public class Offering {
 	private Course course;
-	private int section;//TODO section is badly named group could be a better choice
+	private int section;
 	private Date examDate;
 
 	public Offering(Course course) {
@@ -22,6 +22,12 @@ public class Offering {
 		this.course = course;
 		this.section = section;
 		this.examDate = examDate;
+	}
+
+	public Offering(Course course, int section) {
+		this.course = course;
+		this.section = section;
+		this.examDate = null;
 	}
 	
 	public Course getCourse() {

@@ -24,14 +24,13 @@ public class Course {
 
 	public Course withPre(Course... pres) {
 		prerequisites.addAll(Arrays.asList(pres));
-		return this;//TODO Doesn't need to returns it's instance!
+		return this;
 	}
 
 	public List<Course> getPrerequisites() {
 		return prerequisites;
 	}
 
-	//TODO double check, Override?
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
