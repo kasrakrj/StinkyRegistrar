@@ -56,8 +56,10 @@ public class Course {
 		return id;
 	}
 
-	//TODO override, if obj's type isn't Course exception is thrown
 	public boolean equals(Object obj) {
+		if (getClass() != obj.getClass())
+			return false;
+
 		Course other = (Course)obj;
 		return id.equals(other.id);
 	}
